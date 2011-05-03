@@ -257,13 +257,40 @@ set :use_sudo, false
 set :bundle_flags, "--deployment"
 set :bundle_without, [:development, :test, :deployment]
 
+set :config_files, ['database.yml']
+
 on :start do
   `ssh-add`
 end
 
-require 'hoptoad_notifier/capistrano'
+# server "your staging server here", :app, :web, :db, :primary => true
+# set :deploy_to, "/your/deploy/path"
+# set :user, "deployer"
 
-# Your code goes here
+EOF
+
+append_file 'config/deploy.rb', <<EOF
+
+namespace :deploy do
+  namespace :config do
+    desc 'Make symlink for configs'
+    task :update do
+      config_files.each do |filename|
+        run "#{try_sudo} ln -s #{shared_path}/config/#{filename} #{release_path}/config/#{filename}"
+      end
+    end
+
+    task :setup do
+      run "#{try_sudo} mkdir #{shared_path}/config"
+      config_files.each do |filename|
+        run "#{try_sudo} touch #{shared_path}/config/#{filename}"
+      end
+    end
+  end
+end
+
+after 'deploy:update_code', 'deploy:config:update'
+after 'deploy:setup', 'deploy:config:setup'
 
 EOF
 
