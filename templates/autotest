@@ -1,0 +1,4 @@
+if RUBY_PLATFORM =~ /darwin/
+  require 'autotest/growl'
+  require 'autotest/fsevent'
+end
