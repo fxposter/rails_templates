@@ -2,5 +2,5 @@ Templates for generating new rails applications.
 
 == Usage
 
-  rails new app_name -m http://github.com/...
+  rails new app_name -m https://github.com/fxposter/rails_templates/raw/master/template.rb
 
